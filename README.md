@@ -122,6 +122,10 @@ modal.map('Page', ['F1'], () => modal.help(), 'Show help')
 
 More examples at [Create a keyboard interface to the web].
 
+## References
+
+- [Create a keyboard interface to the web]
+
 [Create a keyboard interface to the web]: https://alexherbo2.github.io/blog/chrome/create-a-keyboard-interface-to-the-web/
 
 [keydown]: https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event
