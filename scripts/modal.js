@@ -17,6 +17,7 @@ class Modal {
     this.filters = {}
     this.mappings = {}
     this.keyMap = Modal.KEY_MAP()
+    this.activeElement = () => document.activeElement
     // Context
     this.context = {}
     this.context.name = null
@@ -31,10 +32,10 @@ class Modal {
     this.events['stop'] = []
     // Filters
     this.filter('Page', () => true)
-    this.filter('Command', () => ! Modal.isText(document.activeElement), 'Page')
-    this.filter('Text', () => Modal.isText(document.activeElement), 'Page')
-    this.filter('Link', () => document.activeElement.nodeName === 'A', 'Command')
-    this.filter('Video', () => document.activeElement.nodeName === 'VIDEO' || Modal.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
+    this.filter('Command', () => ! Modal.isText(this.activeElement()), 'Page')
+    this.filter('Text', () => Modal.isText(this.activeElement()), 'Page')
+    this.filter('Link', () => this.activeElement().nodeName === 'A', 'Command')
+    this.filter('Video', () => this.activeElement().nodeName === 'VIDEO' || this.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
     this.enable('Page')
     // Style
     this.style = `
@@ -285,7 +286,7 @@ class Modal {
     const nodeNames = ['INPUT', 'TEXTAREA', 'OBJECT']
     return element.offsetParent !== null && (nodeNames.includes(element.nodeName) || element.isContentEditable)
   }
-  static findParent(find, element = document.activeElement) {
+  findParent(find, element = this.activeElement()) {
     if (element === null) {
       return null
     }
