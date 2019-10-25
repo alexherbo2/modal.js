@@ -35,6 +35,7 @@ class Modal {
     this.filter('Command', () => ! Modal.isText(this.activeElement()), 'Page')
     this.filter('Text', () => Modal.isText(this.activeElement()), 'Page')
     this.filter('Link', () => this.activeElement().nodeName === 'A', 'Command')
+    this.filter('Image', () => this.activeElement().nodeName === 'IMG', 'Command')
     this.filter('Video', () => this.activeElement().nodeName === 'VIDEO' || this.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
     this.enable('Page')
     // Style

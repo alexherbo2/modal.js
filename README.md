@@ -11,6 +11,7 @@ Modal lets you map a key to a command in different contexts:
 - **Command** is the context for entering keyboard commands,
 - **Text** is the context for typing text,
 - **Link** is the context for links,
+- **Image** is the context for images,
 - **Video** is the context for videos,
 - **Page** is a context with no filtering.
 
