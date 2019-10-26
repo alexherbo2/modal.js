@@ -132,11 +132,19 @@ class Modal {
     command = this.parseCommand(command)
     const key = JSON.stringify(keyChord)
     this.mappings[context][key] = { command, description }
+    // Update running context
+    if (this.context.name === context) {
+      this.context.commands[key] = { command, description }
+    }
   }
   unmap(context, keys) {
     const keyChord = Modal.parseKeys(keys)
     const key = JSON.stringify(keyChord)
     delete this.mappings[context][key]
+    // Update running context
+    if (this.context.name === context) {
+      delete this.context.commands[key]
+    }
   }
   mode(nextMode) {
     this.unlisten()
