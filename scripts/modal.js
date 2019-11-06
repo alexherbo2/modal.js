@@ -127,6 +127,12 @@ class Modal {
   enable(...filters) {
     this.context.filters = filters.filter((name) => this.filters[name])
   }
+  play(...keys) {
+    for (const chord of keys) {
+      const event = new KeyboardEvent('keydown', Modal.parseKeys(chord))
+      this.activeElement().dispatchEvent(event)
+    }
+  }
   map(context, keys, command, description = '') {
     const keyChord = Modal.parseKeys(keys)
     command = this.parseCommand(command)
