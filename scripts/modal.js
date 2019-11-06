@@ -62,7 +62,7 @@ class Modal {
         max-height: 90%;
         overflow-x: auto;
         overflow-y: auto;
-        font-family: serif;
+        font-family: sans-serif;
         font-size: 12px;
         color: gray;
         background-color: white;
@@ -80,7 +80,7 @@ class Modal {
         bottom: 0;
         right: 0;
         z-index: 2147483647; /* 2³¹ − 1 */
-        font-family: serif;
+        font-family: sans-serif;
         font-size: 12px;
         color: gray;
         background-color: white;
