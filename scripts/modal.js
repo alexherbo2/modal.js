@@ -19,7 +19,7 @@ class Modal {
     this.keyMap = Modal.KEY_MAP()
     // State
     this.state = {}
-    this.state.activeElement = () => document.activeElement
+    this.state.activeElement = Modal.getDeepActiveElement
     // Context
     this.context = {}
     this.context.name = null
@@ -304,6 +304,12 @@ class Modal {
       }
     }
     return keyChord
+  }
+  // A wrapper to get activeElement from shadowRoot if available.
+  static getDeepActiveElement() {
+    return document.activeElement.shadowRoot
+      ? document.activeElement.shadowRoot.activeElement
+      : document.activeElement
   }
   static isText(element) {
     const nodeNames = ['INPUT', 'TEXTAREA', 'OBJECT']
