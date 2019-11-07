@@ -82,6 +82,7 @@ class Modal {
         z-index: 2147483647; /* 2³¹ − 1 */
         font-family: sans-serif;
         font-size: 12px;
+        line-height: 1em;
         color: gray;
         background-color: white;
         border: 1px solid lightgray;
