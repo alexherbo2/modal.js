@@ -76,6 +76,7 @@ class Modal {
         padding: 10px 0;
       }
       #notification {
+        user-select: none;
         position: fixed;
         bottom: 0;
         right: 0;
