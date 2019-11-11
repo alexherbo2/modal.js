@@ -75,6 +75,9 @@ class Modal {
         font-weight: bold;
         padding: 10px 0;
       }
+      #help main .keys {
+        white-space: nowrap;
+      }
       #notification {
         user-select: none;
         position: fixed;
@@ -365,6 +368,7 @@ class Modal {
       table.append(row)
       // Table header cell
       const header = document.createElement('th')
+      header.classList.add('keys')
       const keys = this.keyValues(JSON.parse(keyChord))
       for (const key of keys) {
         const atom = document.createElement('kbd')
