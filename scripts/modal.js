@@ -187,7 +187,9 @@ class Modal {
         shiftKey: event.shiftKey,
         // Use event.key for layout-independent keys.
         // Motivation: Swap Caps Lock and Escape.
-        code: this.keyMap[event.code] ? event.code : event.key
+        // Use Space instead of ' '
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Whitespace_keys
+        code: this.keyMap[event.code] ? event.code : /\s/.test(event.key) ? event.code : event.key
       }
       const key = JSON.stringify(keyChord)
       const command = this.context.commands[key]
