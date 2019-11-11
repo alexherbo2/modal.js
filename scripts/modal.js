@@ -185,7 +185,9 @@ class Modal {
         altKey: event.altKey,
         ctrlKey: event.ctrlKey,
         shiftKey: event.shiftKey,
-        code: event.code
+        // Use event.key for layout-independent keys.
+        // Motivation: Swap Caps Lock and Escape.
+        code: this.keyMap[event.code] ? event.code : event.key
       }
       const key = JSON.stringify(keyChord)
       const command = this.context.commands[key]
