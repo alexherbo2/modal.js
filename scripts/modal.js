@@ -75,6 +75,9 @@ class Modal {
         font-weight: bold;
         padding: 10px 0;
       }
+      #help main .label {
+        padding: 1em;
+      }
       #help main .keys {
         white-space: nowrap;
       }
@@ -146,11 +149,11 @@ class Modal {
       this.activeElement.dispatchEvent(event)
     }
   }
-  map(context, keys, command, description = '') {
+  map(context, keys, command, description = '', label = '') {
     const keyChord = Modal.parseKeys(keys)
     command = this.parseCommand(command)
     const key = JSON.stringify(keyChord)
-    const mapping = { context, keyChord, command, description }
+    const mapping = { context, keyChord, command, description, label }
     this.mappings[context][key] = mapping
     // Update running context
     if (this.context.name === context) {
@@ -363,10 +366,20 @@ class Modal {
     caption.textContent = this.context.name
     table.append(caption)
     // Commands
-    for (const [keyChord, { description }] of Object.entries(this.context.commands)) {
+    const labelledRows = {}
+    for (const [keyChord, { description, label }] of Object.entries(this.context.commands)) {
+      if (! labelledRows[label]) {
+        const row = document.createElement('tr')
+        const header = document.createElement('th')
+        header.classList.add('label')
+        header.textContent = label
+        header.colSpan = 2
+        row.append(header)
+        labelledRows[label] = [row]
+      }
+      const rows = labelledRows[label]
       // Table row
       const row = document.createElement('tr')
-      table.append(row)
       // Table header cell
       const header = document.createElement('th')
       header.classList.add('keys')
@@ -381,6 +394,10 @@ class Modal {
       const data = document.createElement('td')
       data.textContent = description
       row.append(data)
+      rows.push(row)
+    }
+    for (const rows of Object.values(labelledRows)) {
+      table.append(...rows)
     }
     // Style
     const style = document.createElement('style')

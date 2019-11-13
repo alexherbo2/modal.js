@@ -22,8 +22,8 @@ Modal lets you map a key to a command in different contexts:
 ``` javascript
 const modal = new Modal
 modal.enable('Text', 'Command')
-modal.map('Command', ['KeyJ'], () => document.scrollingElement.scrollBy({ top: 60 }), 'Scroll down')
-modal.map('Command', ['KeyK'], () => document.scrollingElement.scrollBy({ top: -60 }), 'Scroll up')
+modal.map('Command', ['KeyJ'], () => document.scrollingElement.scrollBy({ top: 60 }), 'Scroll down', 'Scroll')
+modal.map('Command', ['KeyK'], () => document.scrollingElement.scrollBy({ top: -60 }), 'Scroll up', 'Scroll')
 ```
 
 **Context**: Context of the command.
@@ -37,6 +37,8 @@ event that triggered the command – or an instance of **Modal**.
 
 **Description**: Description of the command.
 
+**Label**: Label of the command.
+
 **Note**: Commands are bound to physical keys and displayed with the US layout by default.
 If you want to display the commands with a different layout, you can set the [`keyMap`] or [`KEY_MAP`] properties,
 depending if you want to change the display for an instance of **Modal** or the class itself.
@@ -47,8 +49,8 @@ depending if you want to change the display for an instance of **Modal** or the 
 
 ``` javascript
 const pass = new Modal('Pass')
-modal.map('Page', ['Alt', 'Escape'], pass, 'Pass all keys to the page')
-pass.map('Page', ['Alt', 'Escape'], modal, 'Stop passing keys to the page')
+modal.map('Page', ['Alt', 'Escape'], pass, 'Pass all keys to the page', 'Pass keys')
+pass.map('Page', ['Alt', 'Escape'], modal, 'Stop passing keys to the page', 'Pass keys')
 ```
 
 ### Custom contexts
@@ -74,8 +76,8 @@ You can bind different commands to a same key.
 **Example** – Add mappings to yank pages and links:
 
 ``` javascript
-modal.map('Command', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address')
-modal.map('Link', ['KeyY'], (event) => Clipboard.copy(event.target.href), 'Copy link address')
+modal.map('Command', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address', 'Clipboard')
+modal.map('Link', ['KeyY'], (event) => Clipboard.copy(event.target.href), 'Copy link address', 'Clipboard')
 ```
 
 ### Specific site mappings
@@ -98,7 +100,7 @@ modal.filter('GitHub', () => location.hostname === 'github.com', 'Command')
 modal.filter('GitHub · Notifications', () => location.pathname === '/notifications', 'GitHub')
 modal.enable('GitHub · Notifications', 'GitHub', ...)
 
-modal.map('GitHub · Notifications', ['KeyR'], () => document.querySelector('form[action="/notifications/mark"]').submit(), 'Mark all as read')
+modal.map('GitHub · Notifications', ['KeyR'], () => document.querySelector('form[action="/notifications/mark"]').submit(), 'Mark all as read', 'GitHub · Notifications')
 ```
 
 ### Events
@@ -118,7 +120,7 @@ Finally, you can display all available commands (for the current context) with t
 **Example** – Show help on <kbd>F1</kbd>:
 
 ``` javascript
-modal.map('Page', ['F1'], () => modal.help(), 'Show help')
+modal.map('Page', ['F1'], () => modal.help(), 'Show help', 'Help')
 ```
 
 More examples at [Krabby].
