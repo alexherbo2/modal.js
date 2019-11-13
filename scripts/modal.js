@@ -150,10 +150,11 @@ class Modal {
     const keyChord = Modal.parseKeys(keys)
     command = this.parseCommand(command)
     const key = JSON.stringify(keyChord)
-    this.mappings[context][key] = { command, description }
+    const mapping = { context, keyChord, command, description }
+    this.mappings[context][key] = mapping
     // Update running context
     if (this.context.name === context) {
-      this.context.commands[key] = { command, description }
+      this.context.commands[key] = mapping
     }
   }
   unmap(context, keys) {
