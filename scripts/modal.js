@@ -283,13 +283,18 @@ class Modal {
     if (altKey) keys.push('Alt')
     if (ctrlKey) keys.push('Control')
     if (shiftKey && ! keyMap) keys.push('Shift')
+    const key = this.keyValue({ shiftKey, code })
+    keys.push(key)
+    return keys
+  }
+  keyValue({ shiftKey, code }) {
+    const keyMap = this.keyMap[code]
     const key = keyMap
       ? shiftKey
       ? keyMap.shiftKey
       : keyMap.key
       : code
-    keys.push(key)
-    return keys
+    return key
   }
   static parseKeys(keys) {
     const keyChord = {
