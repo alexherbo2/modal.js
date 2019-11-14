@@ -377,7 +377,7 @@ class Modal {
     table.append(caption)
     // Commands
     const labelledRows = {}
-    for (const [keyChord, { description, label }] of Object.entries(this.context.commands)) {
+    for (const { keyChord, description, label } of Object.values(this.context.commands)) {
       if (! labelledRows[label]) {
         const row = document.createElement('tr')
         const header = document.createElement('th')
@@ -393,7 +393,7 @@ class Modal {
       // Table header cell
       const header = document.createElement('th')
       header.classList.add('keys')
-      const keys = this.keyValues(JSON.parse(keyChord))
+      const keys = this.keyValues(keyChord)
       for (const key of keys) {
         const atom = document.createElement('kbd')
         atom.textContent = key
