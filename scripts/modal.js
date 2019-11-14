@@ -156,7 +156,7 @@ class Modal {
     const mapping = { context, keyChord, command, description, label }
     this.mappings[context][key] = mapping
     // Update running context
-    if (this.getContexts(this.context.name).includes(context)) {
+    if (this.getContexts().includes(context)) {
       this.context.commands[key] = mapping
     }
   }
@@ -165,7 +165,7 @@ class Modal {
     const key = Modal.generateKey(keyChord)
     delete this.mappings[context][key]
     // Update running context
-    if (this.getContexts(this.context.name).includes(context)) {
+    if (this.getContexts().includes(context)) {
       delete this.context.commands[key]
     }
   }
@@ -241,7 +241,7 @@ class Modal {
     window.removeEventListener('blur', this.onFocus, true)
     this.triggerEvent('stop')
   }
-  getContexts(name, accumulator = []) {
+  getContexts(name = this.context.name, accumulator = []) {
     if (name === null) {
       return accumulator
     }
@@ -257,7 +257,7 @@ class Modal {
   }
   updateCommands() {
     const commands = {}
-    const contexts = this.getContexts(this.context.name)
+    const contexts = this.getContexts()
     for (const context of contexts) {
       for (const [key, mapping] of Object.entries(this.mappings[context])) {
         if (commands[key] === undefined) {
