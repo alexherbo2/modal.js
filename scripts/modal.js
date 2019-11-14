@@ -196,7 +196,8 @@ class Modal {
         // Motivation: Swap Caps Lock and Escape.
         // Use Space instead of ' '
         // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Whitespace_keys
-        code: this.keyMap[event.code] ? event.code : /\s/.test(event.key) ? event.code : event.key
+        // Note: event.key is not defined when invoked with play()
+        code: this.keyMap[event.code] ? event.code : (! event.key || /\s/.test(event.key)) ? event.code : event.key
       }
       const key = JSON.stringify(keyChord)
       const command = this.context.commands[key]
