@@ -145,14 +145,14 @@ class Modal {
   }
   play(...keys) {
     for (const chord of keys) {
-      const event = new KeyboardEvent('keydown', Modal.parseKeys(chord))
+      const event = new KeyboardEvent('keydown', this.parseKeys(chord))
       this.activeElement.dispatchEvent(event)
     }
   }
   map(context, keys, command, description = '', label = '') {
-    const keyChord = Modal.parseKeys(keys)
+    const keyChord = this.parseKeys(keys)
     command = this.parseCommand(command)
-    const key = JSON.stringify(keyChord)
+    const key = Modal.generateKey(keyChord)
     const mapping = { context, keyChord, command, description, label }
     this.mappings[context][key] = mapping
     // Update running context
@@ -161,8 +161,8 @@ class Modal {
     }
   }
   unmap(context, keys) {
-    const keyChord = Modal.parseKeys(keys)
-    const key = JSON.stringify(keyChord)
+    const keyChord = this.parseKeys(keys)
+    const key = Modal.generateKey(keyChord)
     delete this.mappings[context][key]
     // Update running context
     if (this.context.name === context) {
@@ -196,10 +196,9 @@ class Modal {
         // Motivation: Swap Caps Lock and Escape.
         // Use Space instead of ' '
         // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Whitespace_keys
-        // Note: event.key is not defined when invoked with play()
-        code: this.keyMap[event.code] ? event.code : (! event.key || /\s/.test(event.key)) ? event.code : event.key
+        code: this.keyMap[event.code] ? event.code : /\s/.test(event.key) ? event.code : event.key
       }
-      const key = JSON.stringify(keyChord)
+      const key = Modal.generateKey(keyChord)
       const command = this.context.commands[key]
       if (command) {
         // Prevent the browsers default behavior (such as opening a link)
@@ -276,6 +275,9 @@ class Modal {
         return command
     }
   }
+  static generateKey({ metaKey, altKey, ctrlKey, shiftKey, code }) {
+    return JSON.stringify({ metaKey, altKey, ctrlKey, shiftKey, code })
+  }
   keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }) {
     const keys = []
     const keyMap = this.keyMap[code]
@@ -296,13 +298,14 @@ class Modal {
       : code
     return key
   }
-  static parseKeys(keys) {
+  parseKeys(keys) {
     const keyChord = {
       metaKey: false,
       altKey: false,
       ctrlKey: false,
       shiftKey: false,
-      code: ''
+      code: '',
+      key: ''
     }
     for (const key of keys) {
       switch (key) {
@@ -322,6 +325,7 @@ class Modal {
           keyChord.code = key
       }
     }
+    keyChord.key = this.keyValue(keyChord)
     return keyChord
   }
   // A wrapper to get activeElement from shadowRoot if available.
