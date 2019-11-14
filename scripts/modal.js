@@ -156,7 +156,7 @@ class Modal {
     const mapping = { context, keyChord, command, description, label }
     this.mappings[context][key] = mapping
     // Update running context
-    if (this.context.name === context) {
+    if (this.getContexts(this.context.name).includes(context)) {
       this.context.commands[key] = mapping
     }
   }
@@ -165,7 +165,7 @@ class Modal {
     const key = Modal.generateKey(keyChord)
     delete this.mappings[context][key]
     // Update running context
-    if (this.context.name === context) {
+    if (this.getContexts(this.context.name).includes(context)) {
       delete this.context.commands[key]
     }
   }
