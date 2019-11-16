@@ -234,6 +234,8 @@ class Modal {
     // Initialize active context
     this.updateContext()
     this.triggerEvent('start')
+    // Update context when DOM has been loaded
+    document.addEventListener('DOMContentLoaded', (event) => this.updateContext())
   }
   unlisten() {
     window.removeEventListener('keydown', this.onKey, true)
