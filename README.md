@@ -13,6 +13,7 @@ Modal lets you map a key to a command in different contexts:
 - **Link** is the context for links,
 - **Image** is the context for images,
 - **Video** is the context for videos,
+- **Document** is the context when selecting the whole document,
 - **Page** is a context with no filtering.
 
 ### Get started
@@ -61,7 +62,7 @@ Custom contexts can be created using filters.
 
 ``` javascript
 modal.filter('Link', () => document.activeElement.nodeName === 'A', 'Command')
-modal.enable('Link', 'Text', 'Command')
+modal.enable('Link', 'Document', 'Text', 'Command')
 ```
 
 The filter is a function that dictates in what context a mapping will be available.
@@ -76,7 +77,7 @@ You can bind different commands to a same key.
 **Example** – Add mappings to yank pages and links:
 
 ``` javascript
-modal.map('Command', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address', 'Clipboard')
+modal.map('Document', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address', 'Clipboard')
 modal.map('Link', ['KeyY'], (event) => Clipboard.copy(event.target.href), 'Copy link address', 'Clipboard')
 ```
 
