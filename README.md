@@ -38,6 +38,23 @@ one argument, the [`keydown`] event that triggered the command.  For most comman
 this argument can be ignored.  The command can also be an instance of **Modal**
 to facilitate command chaining.
 
+**Example** – Example where `event` parameter can be useful for smooth scrolling:
+
+``` javascript
+const scrollDown = (repeat) => {
+  const behavior = repeat ? 'auto' : 'smooth'
+  document.scrollingElement.scrollBy({ top: 70, behavior })
+}
+
+const scrollUp = (repeat) => {
+  const behavior = repeat ? 'auto' : 'smooth'
+  document.scrollingElement.scrollBy({ top: -70, behavior })
+}
+
+modal.map('Command', ['KeyJ'], ({ repeat }) => scrollDown(repeat), 'Scroll down', 'Scroll')
+modal.map('Command', ['KeyK'], ({ repeat }) => scrollUp(repeat), 'Scroll up', 'Scroll')
+```
+
 **Description**: Description of the command.
 
 **Label**: Label of the command.
