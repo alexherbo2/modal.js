@@ -33,8 +33,10 @@ modal.map('Command', ['KeyK'], () => document.scrollingElement.scrollBy({ top: -
 They are composed of a single [key code][KeyboardEvent.code] and optional [modifiers].
 For special keys, the list of key values can be found [here][Key Values].
 
-**Command**: The command is either a function that takes exactly one argument – the [keydown]
-event that triggered the command – or an instance of **Modal**.
+**Command**: The command is the function to evaluate.  The function takes exactly
+one argument, the [`keydown`] event that triggered the command.  For most commands,
+this argument can be ignored.  The command can also be an instance of **Modal**
+to facilitate command chaining.
 
 **Description**: Description of the command.
 
@@ -133,7 +135,7 @@ More examples at [Krabby].
 [Krabby]: https://krabby.netlify.com
 [Create a keyboard interface to the web]: https://alexherbo2.github.io/blog/chrome/create-a-keyboard-interface-to-the-web/
 
-[keydown]: https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event
+[`keydown`]: https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event
 [KeyboardEvent.code]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
 [Key Values]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
 [Modifiers]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Modifier_keys
