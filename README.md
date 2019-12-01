@@ -97,7 +97,7 @@ You can bind different commands to a same key.
 
 ``` javascript
 modal.map('Document', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address', 'Clipboard')
-modal.map('Link', ['KeyY'], (event) => Clipboard.copy(event.target.href), 'Copy link address', 'Clipboard')
+modal.map('Link', ['KeyY'], ({ target }) => Clipboard.copy(target.href), 'Copy link address', 'Clipboard')
 ```
 
 ### Specific site mappings
