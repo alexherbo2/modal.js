@@ -1,9 +1,17 @@
 class Modal {
-  // To do: Use public static fields when supported by Firefox
+
+  // Constants ─────────────────────────────────────────────────────────────────
+
+  // TODO: Use public static fields when supported by Firefox.
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/Class_fields#Public_static_fields
+
+  // Key values
+  // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
+
   static MODIFIER_KEYS() {
     return ['Shift', 'Control', 'Alt', 'Meta']
   }
+
   static KEY_MAP() {
     return {
       Backquote: { key: '`', shiftKey: '~' }, Digit1: { key: '1', shiftKey: '!' }, Digit2: { key: '2', shiftKey: '@' }, Digit3: { key: '3', shiftKey: '#' }, Digit4: { key: '4', shiftKey: '$' }, Digit5: { key: '5', shiftKey: '%' }, Digit6: { key: '6', shiftKey: '^' }, Digit7: { key: '7', shiftKey: '&' }, Digit8: { key: '8', shiftKey: '*' }, Digit9: { key: '9', shiftKey: '(' }, Digit0: { key: '0', shiftKey: ')' }, Minus: { key: '-', shiftKey: '_' }, Equal: { key: '=', shiftKey: '+' },
@@ -12,37 +20,11 @@ class Modal {
       KeyZ: { key: 'z', shiftKey: 'Z' }, KeyX: { key: 'x', shiftKey: 'X' }, KeyC: { key: 'c', shiftKey: 'C' }, KeyV: { key: 'v', shiftKey: 'V' }, KeyB: { key: 'b', shiftKey: 'B' }, KeyN: { key: 'n', shiftKey: 'N' }, KeyM: { key: 'm', shiftKey: 'M' }, Comma: { key: ',', shiftKey: '<' }, Period: { key: '.', shiftKey: '>' }, Slash: { key: '/', shiftKey: '?' }
     }
   }
-  constructor(name) {
-    this.name = name
-    this.filters = {}
-    this.mappings = {}
-    this.keyMap = Modal.KEY_MAP()
-    // State
-    this.state = {}
-    this.state.activeElement = Modal.getDeepActiveElement
-    // Context
-    this.context = {}
-    this.context.name = null
-    this.context.filters = []
-    this.context.commands = {}
-    // Events
-    this.events = {}
-    this.events['context-change'] = []
-    this.events['command'] = []
-    this.events['default'] = []
-    this.events['start'] = []
-    this.events['stop'] = []
-    // Filters
-    this.filter('Page', () => true)
-    this.filter('Document', () => this.activeElement.nodeName === 'BODY', 'Command')
-    this.filter('Command', () => ! Modal.isText(this.activeElement), 'Page')
-    this.filter('Text', () => Modal.isText(this.activeElement), 'Page')
-    this.filter('Link', () => this.activeElement.nodeName === 'A', 'Command')
-    this.filter('Image', () => this.activeElement.nodeName === 'IMG', 'Command')
-    this.filter('Video', () => this.activeElement.nodeName === 'VIDEO' || this.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
-    this.enable('Page')
-    // Style
-    this.style = `
+
+  // Settings ──────────────────────────────────────────────────────────────────
+
+  static style() {
+    return `
       #help.overlay {
         display: flex; /* Enable to center content */
         justify-content: center; /* Horizontally */
@@ -131,25 +113,76 @@ class Modal {
       }
     `
   }
+
+  // Methods ───────────────────────────────────────────────────────────────────
+
+  // Initialization ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
+  constructor(name) {
+    this.name = name
+    this.filters = {}
+    this.mappings = {}
+    this.keyMap = Modal.KEY_MAP()
+    // State
+    this.state = {}
+    this.state.activeElement = Modal.getDeepActiveElement
+    // Context
+    this.context = {}
+    this.context.name = null
+    this.context.filters = []
+    this.context.commands = {}
+    // Events
+    this.events = {}
+    this.events['context-change'] = []
+    this.events['command'] = []
+    this.events['default'] = []
+    this.events['start'] = []
+    this.events['stop'] = []
+    // Filters
+    this.filter('Page', () => true)
+    this.filter('Document', () => this.activeElement.nodeName === 'BODY', 'Command')
+    this.filter('Command', () => ! Modal.isText(this.activeElement), 'Page')
+    this.filter('Text', () => Modal.isText(this.activeElement), 'Page')
+    this.filter('Link', () => this.activeElement.nodeName === 'A', 'Command')
+    this.filter('Image', () => this.activeElement.nodeName === 'IMG', 'Command')
+    this.filter('Video', () => this.activeElement.nodeName === 'VIDEO' || this.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
+    this.enable('Page')
+    // Style
+    this.style = Modal.style()
+  }
+
+  // Active element ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   get activeElement() {
     return this.state.activeElement()
   }
+
   set activeElement(callback) {
     this.state.activeElement = callback
   }
+
+  // Filters ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   filter(name, filter, parent = null) {
     this.filters[name] = { filter, parent }
     this.mappings[name] = {}
   }
+
   enable(...filters) {
     this.context.filters = filters.filter((name) => this.filters[name])
   }
+
+  // Macros ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   play(...keys) {
     for (const chord of keys) {
       const event = new KeyboardEvent('keydown', this.parseKeys(chord))
       this.activeElement.dispatchEvent(event)
     }
   }
+
+  // Mappings ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   map(context, keys, command, description = '', label = '') {
     const keyChord = this.parseKeys(keys)
     command = this.parseCommand(command)
@@ -161,6 +194,7 @@ class Modal {
       this.context.commands[key] = mapping
     }
   }
+
   unmap(context, keys) {
     const keyChord = this.parseKeys(keys)
     const key = Modal.generateKey(keyChord)
@@ -170,18 +204,28 @@ class Modal {
       delete this.context.commands[key]
     }
   }
+
+  // Mode passing ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   mode(nextMode) {
     this.unlisten()
     nextMode.listen()
   }
+
+  // Events ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   on(type, listener) {
     this.events[type].push(listener)
   }
+
   triggerEvent(type, ...parameters) {
     for (const listener of this.events[type]) {
       listener(...parameters)
     }
   }
+
+  // Running ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   listen() {
     this.onKey = (event) => {
       // Skip modifiers
@@ -213,9 +257,11 @@ class Modal {
         this.triggerEvent('default', event)
       }
     }
+
     this.onFocus = (event) => {
       this.updateContext()
     }
+
     // Use the capture method.
     //
     // This setting is important to trigger the listeners during the capturing phase
@@ -232,24 +278,31 @@ class Modal {
     window.addEventListener('keydown', this.onKey, true)
     window.addEventListener('focus', this.onFocus, true)
     window.addEventListener('blur', this.onFocus, true)
+
     // Initialize active context
     this.updateContext()
     this.triggerEvent('start')
+
     // Update context when DOM has been loaded
     document.addEventListener('DOMContentLoaded', (event) => this.updateContext())
   }
+
   unlisten() {
     window.removeEventListener('keydown', this.onKey, true)
     window.removeEventListener('focus', this.onFocus, true)
     window.removeEventListener('blur', this.onFocus, true)
     this.triggerEvent('stop')
   }
+
+  // Contexts ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   getContexts(name = this.context.name, accumulator = []) {
     if (name === null) {
       return accumulator
     }
     return this.getContexts(this.filters[name].parent, accumulator.concat(name))
   }
+
   updateContext() {
     const previousContextName = this.context.name
     this.context.name = this.context.filters.find((name) => this.getContexts(name).every((name) => this.filters[name].filter()))
@@ -258,6 +311,9 @@ class Modal {
       this.triggerEvent('context-change', this.context)
     }
   }
+
+  // Commands ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   updateCommands() {
     const commands = {}
     const contexts = this.getContexts()
@@ -270,6 +326,7 @@ class Modal {
     }
     this.context.commands = commands
   }
+
   parseCommand(command) {
     switch (true) {
       case command instanceof Modal:
@@ -278,9 +335,13 @@ class Modal {
         return command
     }
   }
+
+  // Keys ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   static generateKey({ metaKey, altKey, ctrlKey, shiftKey, code }) {
     return JSON.stringify({ metaKey, altKey, ctrlKey, shiftKey, code })
   }
+
   keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }) {
     const keys = []
     const keyMap = this.keyMap[code]
@@ -292,6 +353,7 @@ class Modal {
     keys.push(key)
     return keys
   }
+
   keyValue({ shiftKey, code }) {
     const keyMap = this.keyMap[code]
     const key = keyMap
@@ -301,6 +363,7 @@ class Modal {
       : code
     return key
   }
+
   parseKeys(keys) {
     const keyChord = {
       metaKey: false,
@@ -331,17 +394,21 @@ class Modal {
     keyChord.key = this.keyValue(keyChord)
     return keyChord
   }
+
+  // Helpers ───────────────────────────────────────────────────────────────────
+
   // A wrapper to get activeElement from shadowRoot if available.
   static getDeepActiveElement() {
     return document.activeElement.shadowRoot
       ? document.activeElement.shadowRoot.activeElement
       : document.activeElement
   }
-  static isText(element) {
-    const nodeNames = ['INPUT', 'TEXTAREA', 'OBJECT']
-    return element.offsetParent !== null && (nodeNames.includes(element.nodeName) || element.isContentEditable)
-  }
+
   findParent(find, element = this.activeElement) {
+    return Modal.findParent(find, element)
+  }
+
+  static findParent(find, element = Modal.getDeepActiveElement()) {
     if (element === null) {
       return null
     }
@@ -351,6 +418,16 @@ class Modal {
     }
     return this.findParent(find, element.parentElement)
   }
+
+  static isText(element) {
+    const nodeNames = ['INPUT', 'TEXTAREA', 'OBJECT']
+    return element.offsetParent !== null && (nodeNames.includes(element.nodeName) || element.isContentEditable)
+  }
+
+  // Modules ───────────────────────────────────────────────────────────────────
+
+  // Help ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   help() {
     // Open or close help
     const rootReference = document.querySelector('#modal-help')
@@ -381,6 +458,7 @@ class Modal {
     // Commands
     const labelledRows = {}
     for (const { keyChord, description, label } of Object.values(this.context.commands)) {
+      // Create a new label
       if (! labelledRows[label]) {
         const row = document.createElement('tr')
         const header = document.createElement('th')
@@ -426,6 +504,9 @@ class Modal {
       root.remove()
     })
   }
+
+  // Notifications ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
+
   notify({ id = Date.now(), message, duration }) {
     const initialize = () => {
       let root = document.querySelector('#modal-notifications')

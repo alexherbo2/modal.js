@@ -1,167 +1,32 @@
-# Modal
+# modal.js
 
-> A way to create modal interfaces with filters.
+###### [Demo][Krabby] | [Getting started](doc/tutorial.md)
 
-## Overview
+A way to create modal interfaces with filters.
 
-### Contexts
+A live demo can be found in [Krabby].
 
-Modal lets you map a key to a command in different contexts:
+[Krabby]: https://krabby.netlify.com
 
-- **Command** is the context for entering keyboard commands,
-- **Text** is the context for typing text,
-- **Link** is the context for links,
-- **Image** is the context for images,
-- **Video** is the context for videos,
-- **Document** is the context when selecting the whole document,
-- **Page** is a context with no filtering.
+## Installation
 
-### Get started
+Add [`modal.js`](scripts/modal.js) to your project.
 
-**Example** – A minimal configuration for getting started:
+## Usage
+
+A minimal configuration to get started:
 
 ``` javascript
 const modal = new Modal
 modal.enable('Text', 'Command')
-modal.map('Command', ['KeyJ'], () => document.scrollingElement.scrollBy({ top: 60 }), 'Scroll down', 'Scroll')
-modal.map('Command', ['KeyK'], () => document.scrollingElement.scrollBy({ top: -60 }), 'Scroll up', 'Scroll')
+modal.map('Command', ['KeyJ'], ({ repeat }) => scroll.down(repeat), 'Scroll down', 'Scroll')
+modal.map('Command', ['KeyK'], ({ repeat }) => scroll.up(repeat), 'Scroll up', 'Scroll')
 ```
 
-**Context**: Context of the command.
+**Note**: The commands scroll with [scroll.js].
 
-**Keys**: Keys represent a chord – a key sequence in which the keys are pressed at the same time.
-They are composed of a single [key code][KeyboardEvent.code] and optional [modifiers].
-For special keys, the list of key values can be found [here][Key Values].
+[scroll.js]: https://github.com/alexherbo2/scroll.js
 
-**Command**: The command is the function to evaluate.  The function takes exactly
-one argument, the [`keydown`] event that triggered the command.  For most commands,
-this argument can be ignored.  The command can also be an instance of **Modal**
-to facilitate command chaining.
+You can find some examples in [Krabby].
 
-**Example** – Example where `event` parameter can be useful for smooth scrolling:
-
-``` javascript
-const scrollDown = (repeat) => {
-  const behavior = repeat ? 'auto' : 'smooth'
-  document.scrollingElement.scrollBy({ top: 70, behavior })
-}
-
-const scrollUp = (repeat) => {
-  const behavior = repeat ? 'auto' : 'smooth'
-  document.scrollingElement.scrollBy({ top: -70, behavior })
-}
-
-modal.map('Command', ['KeyJ'], ({ repeat }) => scrollDown(repeat), 'Scroll down', 'Scroll')
-modal.map('Command', ['KeyK'], ({ repeat }) => scrollUp(repeat), 'Scroll up', 'Scroll')
-```
-
-**Description**: Description of the command.
-
-**Label**: Label of the command.
-
-**Note**: Commands are bound to physical keys and displayed with the US layout by default.
-If you want to display the commands with a different layout, you can set the [`keyMap`] or [`KEY_MAP`] properties,
-depending if you want to change the display for an instance of **Modal** or the class itself.
-
-### Passing mode
-
-**Example** – Create a mode to pass all keys but <kbd>Alt</kbd> + <kbd>Escape</kbd>:
-
-``` javascript
-const pass = new Modal('Pass')
-modal.map('Page', ['Alt', 'Escape'], pass, 'Pass all keys to the page', 'Pass keys')
-pass.map('Page', ['Alt', 'Escape'], modal, 'Stop passing keys to the page', 'Pass keys')
-```
-
-### Custom contexts
-
-Custom contexts can be created using filters.
-
-**Example** – Override the built-in link context:
-
-``` javascript
-modal.filter('Link', () => document.activeElement.nodeName === 'A', 'Command')
-modal.enable('Link', 'Document', 'Text', 'Command')
-```
-
-The filter is a function that dictates in what context a mapping will be available.
-
-A third parameter can be passed to inherit a context and its commands.
-In the example above, **Link** inherits from **Command**.
-
-### Same key mappings
-
-You can bind different commands to a same key.
-
-**Example** – Add mappings to yank pages and links:
-
-``` javascript
-modal.map('Document', ['KeyY'], () => Clipboard.copy(location.href), 'Copy page address', 'Clipboard')
-modal.map('Link', ['KeyY'], ({ target }) => Clipboard.copy(target.href), 'Copy link address', 'Clipboard')
-```
-
-### Specific site mappings
-
-Specific site bindings are also supported through custom contexts.
-
-**Example** – Disable shortcuts in Gmail:
-
-``` javascript
-modal.filter('Gmail', () => location.hostname === 'mail.google.com')
-modal.enable('Gmail', ...)
-```
-
-Create a context for [Gmail] and use the [built-in shortcuts][Gmail keyboard shortcuts].
-
-**Example** – Create a context for GitHub:
-
-``` javascript
-modal.filter('GitHub', () => location.hostname === 'github.com', 'Command')
-modal.filter('GitHub · Notifications', () => location.pathname === '/notifications', 'GitHub')
-modal.enable('GitHub · Notifications', 'GitHub', ...)
-
-modal.map('GitHub · Notifications', ['KeyR'], () => document.querySelector('form[action="/notifications/mark"]').submit(), 'Mark all as read', 'GitHub · Notifications')
-```
-
-### Events
-
-Commands can be registered to be executed when certain events arise.
-
-**Example** – Display the current context:
-
-``` javascript
-modal.on('context-change', (context) => modal.notify({ id: 'context', message: context.name }))
-```
-
-### Getting help
-
-Finally, you can display all available commands (for the current context) with the help command.
-
-**Example** – Show help on <kbd>F1</kbd>:
-
-``` javascript
-modal.map('Page', ['F1'], () => modal.help(), 'Show help', 'Help')
-```
-
-More examples at [Krabby].
-
-## References
-
-- [Create a keyboard interface to the web]
-
-[Krabby]: https://krabby.netlify.com
-[Create a keyboard interface to the web]: https://alexherbo2.github.io/blog/chrome/create-a-keyboard-interface-to-the-web/
-
-[`keydown`]: https://developer.mozilla.org/en-US/docs/Web/API/Document/keydown_event
-[KeyboardEvent.code]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/code
-[Key Values]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values
-[Modifiers]: https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Modifier_keys
-
-[Gmail]: https://mail.google.com
-[Gmail keyboard shortcuts]: https://support.google.com/mail/answer/6594
-
-[GitHub]: https://github.com
-[GitHub · Notifications]: https://github.com/notifications
-
-[`keyMap`]: https://github.com/alexherbo2/modal.js/search?q=keyMap
-[`KEY_MAP`]: https://github.com/alexherbo2/modal.js/search?q=KEY_MAP
+Read the [documentation](doc) for a complete reference.
