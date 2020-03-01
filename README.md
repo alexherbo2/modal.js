@@ -10,7 +10,7 @@ A live demo can be found in [Krabby].
 
 ## Installation
 
-Add [`modal.js`](scripts/modal.js) to your project.
+Add [`modal.js`](src/modal.js) to your project.
 
 ## Usage
 
