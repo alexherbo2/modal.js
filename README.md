@@ -1,6 +1,6 @@
 # modal.js
 
-###### [Demo][Krabby] | [Getting started](doc/tutorial.md)
+###### [Demo][Krabby] | [Getting started](docs/tutorial.md)
 
 A way to create modal interfaces with filters.
 
@@ -29,4 +29,4 @@ modal.map('Command', ['KeyK'], ({ repeat }) => scroll.up(repeat), 'Scroll up', '
 
 You can find some examples in [Krabby].
 
-Read the [documentation](doc) for a complete reference.
+Read the [documentation](docs) for a complete reference.
