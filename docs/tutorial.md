@@ -180,7 +180,7 @@ pass.map('Page', ['Alt', 'Escape'], modal, 'Stop passing keys to the page', 'Pas
 Commands can be registered to be executed when certain events arise.
 
 - `context-change(context)`
-- `command(event)`
+- `command(command)`
 - `default(event)`
 - `start()`
 - `stop()`

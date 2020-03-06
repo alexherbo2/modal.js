@@ -252,7 +252,7 @@ class Modal {
         event.stopImmediatePropagation()
         // Command
         command.command(event)
-        this.triggerEvent('command', event)
+        this.triggerEvent('command', command)
       } else {
         this.triggerEvent('default', event)
       }
