@@ -348,11 +348,11 @@ class Modal {
 
   static keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, keyMap = Modal.KEY_MAP()) {
     const keys = []
-    keyMap = keyMap[code]
+    const keySymbol = keyMap[code]
     if (metaKey) keys.push('Meta')
     if (altKey) keys.push('Alt')
     if (ctrlKey) keys.push('Control')
-    if (shiftKey && ! keyMap) keys.push('Shift')
+    if (shiftKey && ! keySymbol) keys.push('Shift')
     const key = Modal.keyValue({ shiftKey, code }, keyMap)
     keys.push(key)
     return keys
@@ -363,11 +363,11 @@ class Modal {
   }
 
   static keyValue({ shiftKey, code }, keyMap = Modal.KEY_MAP()) {
-    keyMap = keyMap[code]
-    const key = keyMap
+    const keySymbol = keyMap[code]
+    const key = keySymbol
       ? shiftKey
-      ? keyMap.shiftKey
-      : keyMap.key
+      ? keySymbol.shiftKey
+      : keySymbol.key
       : code
     return key
   }
