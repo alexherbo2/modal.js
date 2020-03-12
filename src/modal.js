@@ -346,14 +346,14 @@ class Modal {
     return Modal.keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, this.keyMap)
   }
 
-  static keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, keyMap = Modal.KEY_MAP()) {
+  static keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, keyMap = this.KEY_MAP()) {
     const keys = []
     const keySymbol = keyMap[code]
     if (metaKey) keys.push('Meta')
     if (altKey) keys.push('Alt')
     if (ctrlKey) keys.push('Control')
     if (shiftKey && ! keySymbol) keys.push('Shift')
-    const key = Modal.keyValue({ shiftKey, code }, keyMap)
+    const key = this.keyValue({ shiftKey, code }, keyMap)
     keys.push(key)
     return keys
   }
@@ -362,7 +362,7 @@ class Modal {
     return Modal.keyValue({ shiftKey, code }, this.keyMap)
   }
 
-  static keyValue({ shiftKey, code }, keyMap = Modal.KEY_MAP()) {
+  static keyValue({ shiftKey, code }, keyMap = this.KEY_MAP()) {
     const keySymbol = keyMap[code]
     const key = keySymbol
       ? shiftKey
@@ -376,7 +376,7 @@ class Modal {
     return Modal.parseKeys(keys, this.keyMap)
   }
 
-  static parseKeys(keys, keyMap = Modal.KEY_MAP()) {
+  static parseKeys(keys, keyMap = this.KEY_MAP()) {
     const keyChord = {
       metaKey: false,
       altKey: false,
@@ -403,7 +403,7 @@ class Modal {
           keyChord.code = key
       }
     }
-    keyChord.key = Modal.keyValue(keyChord, keyMap)
+    keyChord.key = this.keyValue(keyChord, keyMap)
     return keyChord
   }
 
@@ -420,7 +420,7 @@ class Modal {
     return Modal.findParent(find, element)
   }
 
-  static findParent(find, element = Modal.getDeepActiveElement()) {
+  static findParent(find, element = this.getDeepActiveElement()) {
     if (element === null) {
       return null
     }
