@@ -6,7 +6,7 @@ A way to create modal interfaces with filters.
 
 A live demo can be found in [Krabby].
 
-[Krabby]: https://krabby.netlify.com
+[Krabby]: https://krabby.netlify.app
 
 ## Installation
 
