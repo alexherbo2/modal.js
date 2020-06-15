@@ -126,6 +126,7 @@ class Modal {
     // State
     this.state = {}
     this.state.activeElement = Modal.getDeepActiveElement
+    this.state.keyboardEventLocation = {}
     // Context
     this.context = {}
     this.context.name = null
@@ -230,11 +231,16 @@ class Modal {
     this.onKey = (event) => {
       // Skip modifiers
       if (Modal.MODIFIER_KEYS().includes(event.key)) {
+        // Save the keyboard event location.
+        // Motivation: Add AltGr recognition, so that it will not mess with the regular Alt.
+        // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/location
+        this.state.keyboardEventLocation[event.key] = event.location
         return
       }
       const keyChord = {
         metaKey: event.metaKey,
-        altKey: event.altKey,
+        altKey: (event.altKey && this.state.keyboardEventLocation['Alt'] === KeyboardEvent.DOM_KEY_LOCATION_LEFT),
+        altGrKey: (event.altKey && this.state.keyboardEventLocation['Alt'] === KeyboardEvent.DOM_KEY_LOCATION_RIGHT),
         ctrlKey: event.ctrlKey,
         shiftKey: event.shiftKey,
         // Use event.key for layout-independent keys.
@@ -338,19 +344,20 @@ class Modal {
 
   // Keys ┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈
 
-  static generateKey({ metaKey, altKey, ctrlKey, shiftKey, code }) {
-    return JSON.stringify({ metaKey, altKey, ctrlKey, shiftKey, code })
+  static generateKey({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code }) {
+    return JSON.stringify({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code })
   }
 
-  keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }) {
-    return Modal.keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, this.keyMap)
+  keyValues({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code }) {
+    return Modal.keyValues({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code }, this.keyMap)
   }
 
-  static keyValues({ metaKey, altKey, ctrlKey, shiftKey, code }, keyMap = this.KEY_MAP()) {
+  static keyValues({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code }, keyMap = this.KEY_MAP()) {
     const keys = []
     const keySymbol = keyMap[code]
     if (metaKey) keys.push('Meta')
     if (altKey) keys.push('Alt')
+    if (altGrKey) keys.push('AltGr')
     if (ctrlKey) keys.push('Control')
     if (shiftKey && ! keySymbol) keys.push('Shift')
     const key = this.keyValue({ shiftKey, code }, keyMap)
@@ -380,6 +387,7 @@ class Modal {
     const keyChord = {
       metaKey: false,
       altKey: false,
+      altGrKey: false,
       ctrlKey: false,
       shiftKey: false,
       code: '',
@@ -395,6 +403,9 @@ class Modal {
           break
         case 'Alt':
           keyChord.altKey = true
+          break
+        case 'AltGr':
+          keyChord.altGrKey = true
           break
         case 'Meta':
           keyChord.metaKey = true
