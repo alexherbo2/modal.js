@@ -37,6 +37,7 @@ class Modal {
         height: 100%;
         background-color: hsla(0, 0%, 0%, 0.5);
       }
+
       #help main {
         position: relative;
         width: fit-content;
@@ -53,17 +54,21 @@ class Modal {
         border-radius: 4px;
         padding: 3px;
       }
+
       #help main table caption {
         font-size: 18px;
         font-weight: bold;
         padding: 10px 0;
       }
+
       #help main .label {
         padding: 1em;
       }
+
       #help main .keys {
         white-space: nowrap;
       }
+
       #notification {
         user-select: none;
         position: fixed;
@@ -79,6 +84,7 @@ class Modal {
         border-top-left-radius: 4px;
         padding: 3px;
       }
+
       /* Style from GitHub */
       kbd {
         background-color: #fafbfc;
@@ -94,17 +100,21 @@ class Modal {
         padding: 3px 5px;
         vertical-align: middle;
       }
+
       /* Scrollbar */
       ::-webkit-scrollbar {
         height: 25px;
       }
+
       ::-webkit-scrollbar-button:start,
       ::-webkit-scrollbar-button:end {
         display: none;
       }
+
       ::-webkit-scrollbar-track-piece {
         background-color: #eee;
       }
+
       ::-webkit-scrollbar-thumb {
         background-color: #bbb;
         border: 7px solid #eee;
@@ -123,15 +133,18 @@ class Modal {
     this.filters = {}
     this.mappings = {}
     this.keyMap = Modal.KEY_MAP()
+
     // State
     this.state = {}
     this.state.activeElement = Modal.getDeepActiveElement
     this.state.keyboardEventLocation = {}
+
     // Context
     this.context = {}
     this.context.name = null
     this.context.filters = []
     this.context.commands = {}
+
     // Events
     this.events = {}
     this.events['context-change'] = []
@@ -139,6 +152,7 @@ class Modal {
     this.events['default'] = []
     this.events['start'] = []
     this.events['stop'] = []
+
     // Filters
     this.filter('Page', () => true)
     this.filter('Document', () => this.activeElement.nodeName === 'BODY', 'Command')
@@ -148,6 +162,7 @@ class Modal {
     this.filter('Image', () => this.activeElement.nodeName === 'IMG', 'Command')
     this.filter('Video', () => this.activeElement.nodeName === 'VIDEO' || this.findParent((element) => ['html5-video-player'].some((className) => element.classList.contains(className))), 'Page')
     this.enable('Page')
+
     // Style
     this.style = Modal.style()
   }
@@ -189,7 +204,9 @@ class Modal {
     command = this.parseCommand(command)
     const key = Modal.generateKey(keyChord)
     const mapping = { context, keyChord, command, description, label }
+
     this.mappings[context][key] = mapping
+
     // Update running context
     if (this.getContexts().includes(context)) {
       this.context.commands[key] = mapping
@@ -199,7 +216,9 @@ class Modal {
   unmap(context, keys) {
     const keyChord = this.parseKeys(keys)
     const key = Modal.generateKey(keyChord)
+
     delete this.mappings[context][key]
+
     // Update running context
     if (this.getContexts().includes(context)) {
       delete this.context.commands[key]
@@ -235,20 +254,24 @@ class Modal {
         // Motivation: Add AltGr recognition, so that it will not mess with the regular Alt.
         // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/location
         this.state.keyboardEventLocation[event.key] = event.location
+
         return
       }
+
       const keyChord = {
         metaKey: event.metaKey,
         altKey: (event.altKey && this.state.keyboardEventLocation['Alt'] === KeyboardEvent.DOM_KEY_LOCATION_LEFT),
         altGrKey: (event.altKey && this.state.keyboardEventLocation['Alt'] === KeyboardEvent.DOM_KEY_LOCATION_RIGHT),
         ctrlKey: event.ctrlKey,
         shiftKey: event.shiftKey,
+
         // Use event.key for layout-independent keys.
         // Motivation: Swap Caps Lock and Escape.
         // Use Space instead of ' '
         // https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key/Key_Values#Whitespace_keys
         code: this.keyMap[event.code] ? event.code : /\s/.test(event.key) ? event.code : event.key
       }
+
       const key = Modal.generateKey(keyChord)
       const command = this.context.commands[key]
       if (command) {
@@ -256,8 +279,10 @@ class Modal {
         // and stop the propagation of the event.
         event.preventDefault()
         event.stopImmediatePropagation()
+
         // Command
         command.command(event)
+
         this.triggerEvent('command', command)
       } else {
         this.triggerEvent('default', event)
@@ -297,6 +322,7 @@ class Modal {
     window.removeEventListener('keydown', this.onKey, true)
     window.removeEventListener('focus', this.onFocus, true)
     window.removeEventListener('blur', this.onFocus, true)
+
     this.triggerEvent('stop')
   }
 
@@ -306,12 +332,14 @@ class Modal {
     if (name === null) {
       return accumulator
     }
+
     return this.getContexts(this.filters[name].parent, accumulator.concat(name))
   }
 
   updateContext() {
     const previousContextName = this.context.name
     this.context.name = this.context.filters.find((name) => this.getContexts(name).every((name) => this.filters[name].filter()))
+
     if (this.context.name !== previousContextName) {
       this.updateCommands()
       this.triggerEvent('context-change', this.context)
@@ -330,6 +358,7 @@ class Modal {
         }
       }
     }
+
     this.context.commands = commands
   }
 
@@ -355,13 +384,16 @@ class Modal {
   static keyValues({ metaKey, altKey, altGrKey, ctrlKey, shiftKey, code }, keyMap = this.KEY_MAP()) {
     const keys = []
     const keySymbol = keyMap[code]
+
     if (metaKey) keys.push('Meta')
     if (altKey) keys.push('Alt')
     if (altGrKey) keys.push('AltGr')
     if (ctrlKey) keys.push('Control')
     if (shiftKey && ! keySymbol) keys.push('Shift')
+
     const key = this.keyValue({ shiftKey, code }, keyMap)
     keys.push(key)
+
     return keys
   }
 
@@ -371,11 +403,13 @@ class Modal {
 
   static keyValue({ shiftKey, code }, keyMap = this.KEY_MAP()) {
     const keySymbol = keyMap[code]
+
     const key = keySymbol
       ? shiftKey
       ? keySymbol.shiftKey
       : keySymbol.key
       : code
+
     return key
   }
 
@@ -393,6 +427,7 @@ class Modal {
       code: '',
       key: ''
     }
+
     for (const key of keys) {
       switch (key) {
         case 'Shift':
@@ -414,7 +449,9 @@ class Modal {
           keyChord.code = key
       }
     }
+
     keyChord.key = this.keyValue(keyChord, keyMap)
+
     return keyChord
   }
 
@@ -435,10 +472,12 @@ class Modal {
     if (element === null) {
       return null
     }
+
     const result = find(element)
     if (result) {
       return result
     }
+
     return this.findParent(find, element.parentElement)
   }
 
@@ -458,26 +497,33 @@ class Modal {
       rootReference.remove()
       return
     }
+
     // Initialize
     const root = document.createElement('div')
     root.id = 'modal-help'
+
     // Place the document in a closed shadow root,
     // so that the document and page styles won’t affect each other.
     const shadow = root.attachShadow({ mode: 'closed' })
+
     // Container
     const container = document.createElement('div')
     container.id = 'help'
     container.classList.add('overlay')
+
     // Content
     const content = document.createElement('main')
     container.append(content)
+
     // Table
     const table = document.createElement('table')
     content.append(table)
+
     // Caption
     const caption = document.createElement('caption')
     caption.textContent = this.context.name
     table.append(caption)
+
     // Commands
     const labelledRows = {}
     for (const { keyChord, description, label } of Object.values(this.context.commands)) {
@@ -492,8 +538,10 @@ class Modal {
         labelledRows[label] = [row]
       }
       const rows = labelledRows[label]
+
       // Table row
       const row = document.createElement('tr')
+
       // Table header cell
       const header = document.createElement('th')
       header.classList.add('keys')
@@ -504,22 +552,27 @@ class Modal {
         header.append(atom)
       }
       row.append(header)
+
       // Table data cell
       const data = document.createElement('td')
       data.textContent = description
       row.append(data)
       rows.push(row)
     }
+
     for (const rows of Object.values(labelledRows)) {
       table.append(...rows)
     }
+
     // Style
     const style = document.createElement('style')
     style.textContent = this.style
+
     // Attach
     shadow.append(style)
     shadow.append(container)
     document.documentElement.append(root)
+
     // Close on click
     container.addEventListener('click', (event) => {
       // Stop propagation
@@ -540,31 +593,39 @@ class Modal {
       }
       return root
     }
+
     const clearViewport = (root, id) => {
       const container = root.querySelector(`[data-notification-id="${id}"]`)
       if (container) {
         container.remove()
       }
     }
+
     const notifications = initialize()
     clearViewport(notifications, id)
+
     // Initialize
     const root = document.createElement('div')
     root.setAttribute('data-notification-id', id)
+
     // Place the document in a closed shadow root,
     // so that the document and page styles won’t affect each other.
     const shadow = root.attachShadow({ mode: 'closed' })
+
     // Container
     const container = document.createElement('div')
     container.id = 'notification'
     container.textContent = message
+
     // Style
     const style = document.createElement('style')
     style.textContent = this.style
+
     // Attach
     shadow.append(style)
     shadow.append(container)
     notifications.append(root)
+
     // Duration of the notification (optional)
     if (duration) {
       setTimeout(() => {
